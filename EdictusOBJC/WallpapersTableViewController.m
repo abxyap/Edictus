@@ -14,8 +14,8 @@
 
 @implementation WallpapersTableViewController
 
-//NSString *LibraryPath = @"/var/mobile/Media/Edictus";
-NSString *LibraryPath = @"/Library/WallpaperLoader";
+//NSString *LibraryPath = @"/var/jb/var/mobile/Media/Edictus";
+NSString *LibraryPath = @"/var/jb/Library/WallpaperLoader";
 NSArray *dirs ;
 NSMutableArray *mutableDirs ;
 
@@ -61,7 +61,7 @@ NSMutableArray *mutableDirs ;
     };
     
     
-    //[[[NSFileManager defaultManager] displayNameAtPath:@"/var/mobile/Media/Edictus"] stringByDeletingPathExtension];
+    //[[[NSFileManager defaultManager] displayNameAtPath:@"/var/jb/var/mobile/Media/Edictus"] stringByDeletingPathExtension];
 
 
 
@@ -174,17 +174,21 @@ NSMutableArray *mutableDirs ;
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         NSString *cellN = [mutableDirs objectAtIndex: indexPath.row];
-        NSString *path = [@"/Library/WallpaperLoader/" stringByAppendingString:cellN];
-        
+        NSString *path = [@"/var/jb/Library/WallpaperLoader/" stringByAppendingString:cellN];
+
+        setuid(0);
+        NSLog(@"[MyEdictus] Elevated UID: %d", getuid());
+
         pid_t pid;
-        const char* args[] = {"edictusroot", "rm", "-rf", [path cStringUsingEncoding:NSUTF8StringEncoding], NULL};
-        posix_spawn(&pid, "/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
+        const char* args[] = {"rm", "-rf", [path cStringUsingEncoding:NSUTF8StringEncoding], NULL};
+        posix_spawn(&pid, "/var/jb/usr/bin/rm", NULL, NULL, (char* const*)args, NULL);
         [self fuckOffPreferences];
         [mutableDirs removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         [tableView reloadData];
         
-        
+        setuid(501);
+        NSLog(@"[MyEdictus] Unlevated UID: %d", getuid());
         
         
     }
@@ -194,7 +198,7 @@ NSMutableArray *mutableDirs ;
 -(void)fuckOffPreferences {
     pid_t pid;
     const char* args[] = {"killall", "Preferences", NULL};
-    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
 }
 
 /*

@@ -19,5 +19,10 @@
 		<true/>
 		<key>platform-application</key>
 		<true/>
+		<key>com.apple.security.iokit-user-client-class</key>
+		<array>
+			<string>AppleJPEGDriverUserClient</string>
+			<string>IOSurfaceRootUserClient</string>
+		</array>
 	</dict>
 </plist>

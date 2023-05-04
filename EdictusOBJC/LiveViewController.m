@@ -59,22 +59,29 @@ AVPlayerItem *item;
     // just to clean up
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error;
-    [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Default.m4v" error:&error];
-    [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Default.png" error:&error];
-    [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Wallpaper.plist" error:&error];
+    [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Default.m4v" error:&error];
+    [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Default.png" error:&error];
+    [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Wallpaper.plist" error:&error];
 }
 
 -(void)createWallpaperplist{
     NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    //creating Media Folder in /var/jb/var/mobile
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media"]){
+        NSLog(@"Creating Media Folder in /var/jb/var/mobile");
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media"];
+        [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
+    }
     
     //creating Edictus Folder in Media
-    if (![fileManager fileExistsAtPath:@"/var/mobile/Media/Edictus"]){
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media/Edictus"]){
         NSLog(@"Creating Edictus folder in Media");
-        NSURL *newDir = [NSURL fileURLWithPath:@"/var/mobile/Media/Edictus"];
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media/Edictus"];
         [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
     }
 
-    if (![fileManager fileExistsAtPath: [NSURL fileURLWithPath:@"/var/mobile/Media/Edictus"].absoluteString]){
+    if (![fileManager fileExistsAtPath: [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media/Edictus"].absoluteString]){
         NSString *wallpaperPlist = [NSString stringWithFormat:@"<?xml version=""1.0"" encoding=""UTF-8""?>\n"
                                                         "<!DOCTYPE plist PUBLIC ""-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"">\n"
                                                         "<plist version=""1.0"">\n"
@@ -88,7 +95,7 @@ AVPlayerItem *item;
                                                         "</dict>\n"
                                                         "</plist>\n"];
         
-        [[NSFileManager defaultManager] createFileAtPath:@"/var/mobile/Media/Edictus/Wallpaper.plist" contents:[wallpaperPlist dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
+        [[NSFileManager defaultManager] createFileAtPath:@"/var/jb/var/mobile/Media/Edictus/Wallpaper.plist" contents:[wallpaperPlist dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
     }
     
 }
@@ -97,22 +104,28 @@ AVPlayerItem *item;
 - (void)copyChangeToMediaWithThisWallpaperPath:(NSString *)wallpaperName {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     //creating Edictus Folder in Media
-    if (![fileManager fileExistsAtPath:@"/Library/WallpaperLoader"]){
+    setuid(0);
+    NSLog(@"[MyEdictus] Elevated UID: %d", getuid());
+
+    if (![fileManager fileExistsAtPath:@"/var/jb/Library/WallpaperLoader"]){
         pid_t pid;
-        const char* args[] = {"edictusroot", "mkdir", "/Library/WallpaperLoader", NULL};
-        posix_spawn(&pid, "/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
+        const char* args[] = {"mkdir", "/var/jb/Library/WallpaperLoader", NULL};
+        posix_spawn(&pid, "/var/jb/usr/bin/mdkir", NULL, NULL, (char* const*)args, NULL);
     }
     pid_t pid;
-    const char* args[] = {"edictusroot", "mv", [wallpaperName cStringUsingEncoding:NSUTF8StringEncoding], "/Library/WallpaperLoader/", NULL};
-    posix_spawn(&pid, "/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
+    const char* args[] = {"mv", [wallpaperName cStringUsingEncoding:NSUTF8StringEncoding], "/var/jb/Library/WallpaperLoader/", NULL};
+    posix_spawn(&pid, "/var/jb/usr/bin/mv", NULL, NULL, (char* const*)args, NULL);
     [self fuckOffPreferences];
     printf("Successfully moved a folder\n");
+
+    setuid(501);
+    NSLog(@"[MyEdictus] Unlevated UID: %d", getuid());
 }
 
 -(void)fuckOffPreferences {
     pid_t pid;
     const char* args[] = {"killall", "Preferences", NULL};
-    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
 }
 
 
@@ -156,7 +169,7 @@ AVPlayerItem *item;
     NSData *urlData = [NSData dataWithContentsOfURL:videoURL];
     if ( urlData )
     {
-        NSString  *filePath = [NSString stringWithFormat:@"%@/%@", @"/var/mobile/Media/Edictus/",@"Default.m4v"];
+        NSString  *filePath = [NSString stringWithFormat:@"%@/%@", @"/var/jb/var/mobile/Media/Edictus/",@"Default.m4v"];
         [urlData writeToFile:filePath atomically:YES];
 
     }
@@ -168,7 +181,7 @@ AVPlayerItem *item;
     [imageGenerator setAppliesPreferredTrackTransform:TRUE];
     UIImage* image = [UIImage imageWithCGImage:[imageGenerator copyCGImageAtTime:CMTimeMake(0, 1) actualTime:nil error:nil]];
     NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(image)];
-           [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Default.png"] atomically:YES];
+           [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Default.png"] atomically:YES];
     _thumbnailImageView.image = image;
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
@@ -242,7 +255,7 @@ AVPlayerItem *item;
          
            NSFileManager *fileManager = [NSFileManager defaultManager];
               
-           NSString *mediaEdictus = @"/var/mobile/Media/Edictus/";
+           NSString *mediaEdictus = @"/var/jb/var/mobile/Media/Edictus/";
            NSString *wallpaperNameInMedia = [NSString stringWithFormat: @"%@%@", mediaEdictus, wallpaperName];
            NSLog(@"%@", wallpaperNameInMedia);
               //creating Edictus Folder in Media
@@ -256,7 +269,7 @@ AVPlayerItem *item;
                   // CREATE THUMBNAIL (FOR DEFAULT.PNG)
                 UIImage *thumbnailImage = [self imageWithView:[self thumbnailView]];
                 NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(thumbnailImage)];
-                [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Default.png"] atomically:YES];
+                [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Default.png"] atomically:YES];
                   */
                   
                   // Get all files at /var/mobile/Media/Edictus/

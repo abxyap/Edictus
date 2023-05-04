@@ -56,13 +56,13 @@
 }
 
 -(void)fetchLockedImages {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Media/EdictusLocked/Light.png"]){
-        NSData* data = [NSData dataWithContentsOfFile:@"/var/mobile/Media/EdictusLocked/Light.png"  options:0 error:nil];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Light.png"]){
+        NSData* data = [NSData dataWithContentsOfFile:@"/var/jb/var/mobile/Media/EdictusLocked/Light.png"  options:0 error:nil];
         UIImage *image = [UIImage imageWithData:data];
         _lightImageView.image = image;
         _lightThumbnail.image = image;
         NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(_lightImageView.image)];
-        [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
+        [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
         [[self lockLight] setUserInteractionEnabled:YES];
         [[self lockLight] setHidden:NO];
         [[self lockLight] setImage:[UIImage systemImageNamed:@"lock"] forState:UIControlStateSelected];
@@ -71,13 +71,13 @@
         [[self reverseButton] setUserInteractionEnabled:YES];
         [[self reverseButton] setHidden:NO];
     }
-    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Media/EdictusLocked/Dark.png"]){
-        NSData* data = [NSData dataWithContentsOfFile:@"/var/mobile/Media/EdictusLocked/Dark.png"  options:0 error:nil];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Dark.png"]){
+        NSData* data = [NSData dataWithContentsOfFile:@"/var/jb/var/mobile/Media/EdictusLocked/Dark.png"  options:0 error:nil];
         UIImage *image = [UIImage imageWithData:data];
         _darkImageView.image = image;
         _darkThumbnail.image = image;
         NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(_darkImageView.image)];
-        [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
+        [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
         [[self lockDark] setUserInteractionEnabled:YES];
         [[self lockDark] setHidden:NO];
         [[self lockDark] setImage:[UIImage systemImageNamed:@"lock"] forState:UIControlStateSelected];
@@ -86,7 +86,7 @@
         [[self reverseButton] setUserInteractionEnabled:YES];
         [[self reverseButton] setHidden:NO];
     }
-    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Media/EdictusLocked/Light.png"] && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/mobile/Media/EdictusLocked/Dark.png"]){
+    if ([[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Light.png"] && [[NSFileManager defaultManager] fileExistsAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Dark.png"]){
         [[self createButton] setUserInteractionEnabled:YES];
         [[self createButton] setAlpha:1.0];
     }
@@ -146,7 +146,7 @@
             self->_lightImageView.image = image;
             self->_lightThumbnail.image = image;
             NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(image)];
-            [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
+            [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
         }
         
         if (!self->isDarkLocked) {
@@ -154,7 +154,7 @@
             self->_darkImageView.image = imageForDark;
             self->_darkThumbnail.image = imageForDark;
             NSData *imageDataForDark = [NSData dataWithData:UIImagePNGRepresentation(imageForDark)];
-            [imageDataForDark writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
+            [imageDataForDark writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
         }
         
         [self createWallpaperplist];
@@ -198,10 +198,10 @@
     if (!isLightLocked && !isDarkLocked){
         _lightImageView.image = image2;
         NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(_lightImageView.image)];
-        [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
+        [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
         _darkImageView.image = image1;
         NSData *imageData2 = [NSData dataWithData:UIImagePNGRepresentation(_darkImageView.image)];
-        [imageData2 writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
+        [imageData2 writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
         [[self lockLight] setUserInteractionEnabled:darkUserInteractionCached];
         [[self lockLight] setHidden:darkHiddenCached];
         
@@ -214,14 +214,19 @@
     
 -(void)createFirstTimeMedia{
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath:@"/var/mobile/Media/Edictus"]){
-        NSLog(@"Creating Edictus folder in Media");
-        NSURL *newDir = [NSURL fileURLWithPath:@"/var/mobile/Media/Edictus"];
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media"]){
+        NSLog(@"Creating Media folder in /var/jb/var/mobile");
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media"];
         [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
     }
-    if (![fileManager fileExistsAtPath:@"/var/mobile/Media/EdictusLocked"]){
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media/Edictus"]){
+        NSLog(@"Creating Edictus folder in Media");
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media/Edictus"];
+        [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
+    }
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media/EdictusLocked"]){
         NSLog(@"Creating EdictusLocked folder in Media");
-        NSURL *newDir = [NSURL fileURLWithPath:@"/var/mobile/Media/EdictusLocked"];
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media/EdictusLocked"];
         [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
     }
 }
@@ -233,13 +238,13 @@
         isLightLocked = NO;
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSError *error;
-        [fileManager removeItemAtPath:@"/var/mobile/Media/EdictusLocked/Light.png" error:&error];
+        [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Light.png" error:&error];
     } else {
        [sender setImage:[UIImage systemImageNamed:@"lock"] forState:UIControlStateSelected];
        [sender setSelected:YES];
         isLightLocked = YES;
         NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(_lightImageView.image)];
-        [imageData writeToFile:[@"/var/mobile/Media/EdictusLocked/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
+        [imageData writeToFile:[@"/var/jb/var/mobile/Media/EdictusLocked/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
     }
     
 }
@@ -251,13 +256,13 @@
          isDarkLocked = NO;
          NSFileManager *fileManager = [NSFileManager defaultManager];
          NSError *error;
-         [fileManager removeItemAtPath:@"/var/mobile/Media/EdictusLocked/Dark.png" error:&error];
+         [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Dark.png" error:&error];
        } else {
          [sender setImage:[UIImage systemImageNamed:@"lock"] forState:UIControlStateSelected];
          [sender setSelected:YES];
          isDarkLocked = YES;
          NSData *imageData2 = [NSData dataWithData:UIImagePNGRepresentation(_darkImageView.image)];
-         [imageData2 writeToFile:[@"/var/mobile/Media/EdictusLocked/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
+         [imageData2 writeToFile:[@"/var/jb/var/mobile/Media/EdictusLocked/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
     }
 }
 
@@ -288,11 +293,11 @@
         // just to clean up
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSError *error;
-        [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Light.png" error:&error];
-        [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Dark.png" error:&error];
-        [fileManager removeItemAtPath:@"/var/mobile/Media/EdictusLocked/Light.png" error:&error];
-        [fileManager removeItemAtPath:@"/var/mobile/Media/EdictusLocked/Dark.png" error:&error];
-        [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Wallpaper.plist" error:&error];
+        [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Light.png" error:&error];
+        [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Dark.png" error:&error];
+        [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Light.png" error:&error];
+        [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/EdictusLocked/Dark.png" error:&error];
+        [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Wallpaper.plist" error:&error];
     }];
     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
 
@@ -321,9 +326,9 @@
     // just to clean up
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *error;
-    [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Light.png" error:&error];
-    [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Dark.png" error:&error];
-    [fileManager removeItemAtPath:@"/var/mobile/Media/Edictus/Wallpaper.plist" error:&error];
+    [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Light.png" error:&error];
+    [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Dark.png" error:&error];
+    [fileManager removeItemAtPath:@"/var/jb/var/mobile/Media/Edictus/Wallpaper.plist" error:&error];
     
     [self fetchLockedImages];
 }
@@ -335,15 +340,22 @@
 
 -(void)createWallpaperplist{
     NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    //creating Media Folder in /var/jb/var/mobile
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media"]){
+        NSLog(@"Creating Media folder in /var/jb/var/mobile");
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media"];
+        [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
+    }
     
     //creating Edictus Folder in Media
-    if (![fileManager fileExistsAtPath:@"/var/mobile/Media/Edictus"]){
+    if (![fileManager fileExistsAtPath:@"/var/jb/var/mobile/Media/Edictus"]){
         NSLog(@"Creating Edictus folder in Media");
-        NSURL *newDir = [NSURL fileURLWithPath:@"/var/mobile/Media/Edictus"];
+        NSURL *newDir = [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media/Edictus"];
         [fileManager createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes: nil error:nil];
     }
 
-    if (![fileManager fileExistsAtPath: [NSURL fileURLWithPath:@"/var/mobile/Media/Edictus"].absoluteString]){
+    if (![fileManager fileExistsAtPath: [NSURL fileURLWithPath:@"/var/jb/var/mobile/Media/Edictus"].absoluteString]){
         NSString *wallpaperPlist = [NSString stringWithFormat:@"<?xml version=""1.0"" encoding=""UTF-8""?>\n"
                                                         "<!DOCTYPE plist PUBLIC ""-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"">\n"
                                                         "<plist version=""1.0"">\n"
@@ -361,7 +373,7 @@
                                                         "</dict>\n"
                                                         "</plist>\n"];
         
-        [[NSFileManager defaultManager] createFileAtPath:@"/var/mobile/Media/Edictus/Wallpaper.plist" contents:[wallpaperPlist dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
+        [[NSFileManager defaultManager] createFileAtPath:@"/var/jb/var/mobile/Media/Edictus/Wallpaper.plist" contents:[wallpaperPlist dataUsingEncoding:NSUTF8StringEncoding] attributes:nil];
     }
     
 }
@@ -369,24 +381,30 @@
 
 // function to copy the completed bundle folder from media to wallpaperloader
 - (void)copyChangeToMediaWithThisWallpaperPath:(NSString *)wallpaperName {
+    setuid(0);
+    NSLog(@"[MyEdictus] Elevated UID: %d", getuid());
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     //creating Edictus Folder in Media
-    if (![fileManager fileExistsAtPath:@"/Library/WallpaperLoader"]){
+    if (![fileManager fileExistsAtPath:@"/var/jb/Library/WallpaperLoader"]){
         pid_t pid;
-        const char* args[] = {"edictusroot", "mkdir", "/Library/WallpaperLoader", NULL};
-        posix_spawn(&pid, "/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
+        const char* args[] = {"mkdir", "/var/jb/Library/WallpaperLoader", NULL};
+        posix_spawn(&pid, "/var/jb/usr/bin/mkdir", NULL, NULL, (char* const*)args, NULL);
     }
     pid_t pid;
-    const char* args[] = {"edictusroot", "mv", [wallpaperName cStringUsingEncoding:NSUTF8StringEncoding], "/Library/WallpaperLoader/", NULL};
-    posix_spawn(&pid, "/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
+    const char* args[] = {"mv", [wallpaperName cStringUsingEncoding:NSUTF8StringEncoding], "/var/jb/Library/WallpaperLoader/", NULL};
+    posix_spawn(&pid, "/var/jb/usr/bin/mv", NULL, NULL, (char* const*)args, NULL);
     [self fuckOffPreferences];
     printf("Successfully moved a folder\n");
+
+    setuid(501);
+    NSLog(@"[MyEdictus] Unlevated UID: %d", getuid());
 }
 
 -(void)fuckOffPreferences {
     pid_t pid;
     const char* args[] = {"killall", "Preferences", NULL};
-    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -395,7 +413,7 @@
         _darkImageView.image = image;
         _darkThumbnail.image = image;
         NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(image)];
-        [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
+        [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Dark.png"] atomically:YES];
         [[self reverseButton] setUserInteractionEnabled:YES];
         [[self reverseButton] setHidden:NO];
         [[self lockDark] setUserInteractionEnabled:YES];
@@ -404,7 +422,7 @@
         _lightImageView.image = image;
         _lightThumbnail.image = image;
         NSData *imageData = [NSData dataWithData:UIImagePNGRepresentation(image)];
-        [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
+        [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Light.png"] atomically:YES];
         [[self reverseButton] setUserInteractionEnabled:YES];
         [[self reverseButton] setHidden:NO];
         [[self lockLight] setUserInteractionEnabled:YES];
@@ -458,11 +476,11 @@
       
         NSFileManager *fileManager = [NSFileManager defaultManager];
            
-        NSString *mediaEdictus = @"/var/mobile/Media/Edictus/";
+        NSString *mediaEdictus = @"/var/jb/var/mobile/Media/Edictus/";
         NSString *wallpaperNameInMedia = [NSString stringWithFormat: @"%@%@", mediaEdictus, wallpaperName];
         NSLog(@"%@", wallpaperNameInMedia);
            //creating Edictus Folder in Media
-        NSString *wallpaperNameInLibrary = [NSString stringWithFormat: @"%@%@", @"/Library/WallpaperLoader/",wallpaperName];
+        NSString *wallpaperNameInLibrary = [NSString stringWithFormat: @"%@%@", @"/var/jb/Library/WallpaperLoader/",wallpaperName];
            if (![fileManager fileExistsAtPath: wallpaperNameInLibrary]){
                NSLog(@"Moving Files to wallpapername folder");
                NSURL *newDir = [NSURL fileURLWithPath:wallpaperNameInMedia];
@@ -471,7 +489,7 @@
                // CREATE THUMBNAIL
                UIImage *thumbnailImage = [self imageWithView:[self thumbnailView]];
                NSData *imageData = [NSData dataWithData:UIImageJPEGRepresentation(thumbnailImage, 1.0)];
-               [imageData writeToFile:[@"/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Thumbnail.jpg"] atomically:YES];
+               [imageData writeToFile:[@"/var/jb/var/mobile/Media/Edictus/" stringByAppendingPathComponent:@"Thumbnail.jpg"] atomically:YES];
                
                // Get all files at /var/mobile/Media/Edictus/
                NSArray *files = [fileManager contentsOfDirectoryAtPath:mediaEdictus error:nil];
