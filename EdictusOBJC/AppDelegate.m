@@ -16,6 +16,11 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    setuid(0);
+    if(getuid() != 0)
+        exit(0);
+    NSLog(@"[MyEdictus] Elevated UID: %d", getuid());
+
     // Override point for customization after application launch.
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 

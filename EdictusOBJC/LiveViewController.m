@@ -104,8 +104,6 @@ AVPlayerItem *item;
 - (void)copyChangeToMediaWithThisWallpaperPath:(NSString *)wallpaperName {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     //creating Edictus Folder in Media
-    setuid(0);
-    NSLog(@"[MyEdictus] Elevated UID: %d", getuid());
 
     if (![fileManager fileExistsAtPath:@"/var/jb/Library/WallpaperLoader"]){
         pid_t pid;
@@ -117,9 +115,6 @@ AVPlayerItem *item;
     posix_spawn(&pid, "/var/jb/usr/bin/mv", NULL, NULL, (char* const*)args, NULL);
     [self fuckOffPreferences];
     printf("Successfully moved a folder\n");
-
-    setuid(501);
-    NSLog(@"[MyEdictus] Unlevated UID: %d", getuid());
 }
 
 -(void)fuckOffPreferences {

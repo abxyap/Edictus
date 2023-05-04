@@ -176,9 +176,6 @@ NSMutableArray *mutableDirs ;
         NSString *cellN = [mutableDirs objectAtIndex: indexPath.row];
         NSString *path = [@"/var/jb/Library/WallpaperLoader/" stringByAppendingString:cellN];
 
-        setuid(0);
-        NSLog(@"[MyEdictus] Elevated UID: %d", getuid());
-
         pid_t pid;
         const char* args[] = {"rm", "-rf", [path cStringUsingEncoding:NSUTF8StringEncoding], NULL};
         posix_spawn(&pid, "/var/jb/usr/bin/rm", NULL, NULL, (char* const*)args, NULL);
@@ -186,11 +183,6 @@ NSMutableArray *mutableDirs ;
         [mutableDirs removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         [tableView reloadData];
-        
-        setuid(501);
-        NSLog(@"[MyEdictus] Unlevated UID: %d", getuid());
-        
-        
     }
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
 }
