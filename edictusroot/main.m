@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 int proc_pidpath(int pid, void *buffer, uint32_t buffersize);
 bool print = true;
@@ -18,48 +20,18 @@ void printhelp() {
          "edictusroot (paramaters) [command]\n");
 }
 
-void patch_libjailbreak() {
-  void *handle = dlopen("/usr/lib/libjailbreak.dylib", RTLD_LAZY);
-  if (!handle)
-    if (print) {
-      printf("[edictusroot] electra isnt installed, not patching\n");
-    }
-  return;
-
-  if (print) {
-    printf("[edictusroot] patching for electra"
-           "first...\n");
-  }
-  // Reset errors
-  dlerror();
-  typedef void (*fix_setuid_prt_t)(pid_t pid);
-  fix_setuid_prt_t ptr =
-      (fix_setuid_prt_t)dlsym(handle, "jb_oneshot_fix_setuid_now");
-
-  const char *dlsym_error = dlerror();
-  if (dlsym_error)
-    printf("[edictusroot] error when patching for electra: %s\n",
-           dlsym_error);
-  return;
-
-  ptr(getpid());
-  if (print) {
-    printf("[edictusroot] patched\n");
-  }
-}
-
 int main(int argc, char *argv[], char *envp[]) {
   // Check parent process, courtesy of
   // https://github.com/wstyres/Zebra/blob/master/Supersling/main.c
-  pid_t pid = getppid();
+  // pid_t pid = getppid();
 
-  char buffer[4 * PATH_MAX];
-  int ret = proc_pidpath(pid, buffer, sizeof(buffer));
-  if (ret < 1 || strcmp(buffer, "/Applications/Edictus.app/Edictus") != 0) {
-    fflush(stdout);
-    printf("[edictusroot] you are not edictus...\n");
-    return 1;
-  }
+  // char buffer[4 * PATH_MAX];
+  // int ret = proc_pidpath(pid, buffer, sizeof(buffer));
+  // if (ret < 1 || strcmp(buffer, "/Applications/Edictus.app/Edictus") != 0) {
+  //   fflush(stdout);
+  //   printf("[edictusroot] you are not edictus...\n");
+  //   return 1;
+  // }
 
   if (argc == 1) {
     printhelp();
@@ -80,9 +52,6 @@ int main(int argc, char *argv[], char *envp[]) {
     }
 
     if (strcmp(argv[1], "--test") == 0 || strcmp(argv[1], "-t") == 0) {
-
-      patch_libjailbreak();
-
       printf("[edictusroot] setting uid to 0...\n");
       setuid(0);
 
@@ -99,7 +68,6 @@ int main(int argc, char *argv[], char *envp[]) {
 
     if (strcmp(argv[1], "--status") == 0 || strcmp(argv[1], "-st") == 0) {
       print = false;
-      patch_libjailbreak();
       setuid(0);
 
       if (!getuid()) {
@@ -131,8 +99,6 @@ int main(int argc, char *argv[], char *envp[]) {
     }
   }
 
-  patch_libjailbreak();
-
   if (print) {
     printf("[edictusroot] setting uid to 0...\n");
   }
@@ -145,22 +111,48 @@ int main(int argc, char *argv[], char *envp[]) {
       printf("[edictusroot] running command: %s\n", c);
     }
 
-    FILE *fp;
-    char path[1035];
+    // FILE *fp;
+    // char path[1035];
 
-    fp = popen(c, "r");
-    if (fp == NULL) {
-      printf("[edictusroot] failed to run command\n");
-      return 1;
-    }
+    // fp = popen(c, "r");
+    // if (fp == NULL) {
+    //   printf("[edictusroot] failed to run command\n");
+    //   return 1;
+    // }
 
-    /* Read the output a line at a time - output it. */
-    while (fgets(path, sizeof(path), fp) != NULL) {
-      printf("%s", path);
-    }
+    // /* Read the output a line at a time - output it. */
+    // while (fgets(path, sizeof(path), fp) != NULL) {
+    //   printf("%s", path);
+    // }
 
-    /* close */
-    pclose(fp);
+    // /* close */
+    // pclose(fp);
+
+
+    // int new_argc = argc - 1;
+    // char** new_argv = malloc(new_argc * sizeof(char*));
+    // memcpy(new_argv, argv + 1, new_argc * sizeof(char*));
+
+  char* new_argv[argc];
+  for (int i = 1; i < argc; i++) {
+      new_argv[i-1] = argv[i];
+  }
+  new_argv[argc-1] = NULL;
+
+
+  // for (int i = 0; i < argc-1; i++) {
+  //   NSLog(@"[MyEdictus] cmd: %s\n", new_argv[i]);
+  // }
+
+    pid_t our_pid;
+    int our_status;
+    char *executable_path = malloc((strlen("/var/jb/usr/bin/") + strlen(new_argv[0]) + 1) * sizeof(char));
+    strcat(executable_path, "/var/jb/usr/bin/");
+    strcat(executable_path, new_argv[0]);
+    // printf("executable_path: %s\n", executable_path);
+    posix_spawn(&our_pid, executable_path, NULL, NULL, (char* const*)new_argv, NULL);
+    waitpid(our_pid, &our_status, WEXITED);
+
     return 0;
   } else {
     if (print) {

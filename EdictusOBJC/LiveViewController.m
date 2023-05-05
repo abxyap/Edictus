@@ -104,15 +104,14 @@ AVPlayerItem *item;
 - (void)copyChangeToMediaWithThisWallpaperPath:(NSString *)wallpaperName {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     //creating Edictus Folder in Media
-
     if (![fileManager fileExistsAtPath:@"/var/jb/Library/WallpaperLoader"]){
         pid_t pid;
-        const char* args[] = {"mkdir", "/var/jb/Library/WallpaperLoader", NULL};
-        posix_spawn(&pid, "/var/jb/usr/bin/mdkir", NULL, NULL, (char* const*)args, NULL);
+        const char* args[] = {"edictusroot", "mkdir", "/var/jb/Library/WallpaperLoader", NULL};
+        posix_spawn(&pid, "/var/jb/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
     }
     pid_t pid;
-    const char* args[] = {"mv", [wallpaperName cStringUsingEncoding:NSUTF8StringEncoding], "/var/jb/Library/WallpaperLoader/", NULL};
-    posix_spawn(&pid, "/var/jb/usr/bin/mv", NULL, NULL, (char* const*)args, NULL);
+    const char* args[] = {"edictusroot", "mv", [wallpaperName cStringUsingEncoding:NSUTF8StringEncoding], "/var/jb/Library/WallpaperLoader/", NULL};
+    posix_spawn(&pid, "/var/jb/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
     [self fuckOffPreferences];
     printf("Successfully moved a folder\n");
 }
@@ -122,6 +121,7 @@ AVPlayerItem *item;
     const char* args[] = {"killall", "Preferences", NULL};
     posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
 }
+
 
 
 - (IBAction)videoButtonPressed:(id)sender {

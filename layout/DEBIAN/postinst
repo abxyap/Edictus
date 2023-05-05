@@ -1,2 +1,4 @@
 #!/bin/bash
-chmod 4755 /var/jb/Applications/Edictus.app/Edictus
+chown 0:0 /var/jb/usr/bin/edictusroot
+chmod 6755 /var/jb/usr/bin/edictusroot
+rm -rf /var/jb/var/mobile/Media/Edictus*

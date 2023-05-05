@@ -15,6 +15,10 @@ all::
 after-stage::
 	mv Edictus.xcarchive/Products/Applications $(THEOS_STAGING_DIR)/Applications
 	rm -rf Edictus.xcarchive
+	$(MAKE) -C edictusroot LEAN_AND_MEAN=1
+	mkdir -p $(THEOS_STAGING_DIR)/usr/bin
+	cp ./edictusroot/LICENSE $(THEOS_STAGING_DIR)/Applications/Edictus.app/LICENSEgizroot
+	mv $(THEOS_OBJ_DIR)/edictusroot $(THEOS_STAGING_DIR)/usr/bin
 	ldid -S $(THEOS_STAGING_DIR)/Applications/Edictus.app/Edictus
 	ldid -SEdictus.entitlements $(THEOS_STAGING_DIR)/Applications/Edictus.app/Edictus
 

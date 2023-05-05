@@ -175,16 +175,15 @@ NSMutableArray *mutableDirs ;
         // Delete the row from the data source
         NSString *cellN = [mutableDirs objectAtIndex: indexPath.row];
         NSString *path = [@"/var/jb/Library/WallpaperLoader/" stringByAppendingString:cellN];
-
+        
         pid_t pid;
-        const char* args[] = {"rm", "-rf", [path cStringUsingEncoding:NSUTF8StringEncoding], NULL};
-        posix_spawn(&pid, "/var/jb/usr/bin/rm", NULL, NULL, (char* const*)args, NULL);
+        const char* args[] = {"edictusroot", "rm", "-rf", [path cStringUsingEncoding:NSUTF8StringEncoding], NULL};
+        posix_spawn(&pid, "/var/jb/usr/bin/edictusroot", NULL, NULL, (char* const*)args, NULL);
         [self fuckOffPreferences];
         [mutableDirs removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        [tableView reloadData];
+        [tableView reloadData];  
     }
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
 }
 
 -(void)fuckOffPreferences {
