@@ -7,6 +7,24 @@
 #include <unistd.h>
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <sys/proc.h>
+#import <sys/sysctl.h>
+
+char *getProcessNameFromPID(int pid) {
+    int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
+    struct kinfo_proc kp;
+    size_t size = sizeof(kp);
+    char *name = malloc(MAXCOMLEN+1);
+
+    if (sysctl(mib, sizeof(mib)/sizeof(*mib), &kp, &size, NULL, 0) < 0) {
+        return NULL;
+    }
+
+    strncpy(name, kp.kp_proc.p_comm, MAXCOMLEN);
+    name[MAXCOMLEN] = '\0';
+
+    return name;
+}
 
 int proc_pidpath(int pid, void *buffer, uint32_t buffersize);
 bool print = true;
@@ -23,15 +41,15 @@ void printhelp() {
 int main(int argc, char *argv[], char *envp[]) {
   // Check parent process, courtesy of
   // https://github.com/wstyres/Zebra/blob/master/Supersling/main.c
-  // pid_t pid = getppid();
+  pid_t pid = getppid();
 
-  // char buffer[4 * PATH_MAX];
-  // int ret = proc_pidpath(pid, buffer, sizeof(buffer));
-  // if (ret < 1 || strcmp(buffer, "/Applications/Edictus.app/Edictus") != 0) {
-  //   fflush(stdout);
-  //   printf("[edictusroot] you are not edictus...\n");
-  //   return 1;
-  // }
+  char *name = getProcessNameFromPID(pid);
+  // NSLog(@"[MyEdictus] name: %s", name);
+  if (strcmp(name, "Edictus") != 0) {
+    fflush(stdout);
+    printf("[edictusroot] you are not edictus...\n");
+    return 1;
+  }
 
   if (argc == 1) {
     printhelp();
